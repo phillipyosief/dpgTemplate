@@ -1,0 +1,9 @@
+APP_NAME = 'MyApp'
+APP_VERSION = '1.0.0'
+APP_DESCRIPTION = 'MyApp is a simple application that does nothing.'
+APP_AUTHOR = ''
+APP_AUTHOR_EMAIL = ''
+
+WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 600
+WINDOW_TITLE = APP_NAME
