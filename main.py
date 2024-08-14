@@ -28,8 +28,7 @@ class App:
         directory_manager.create_app_dirs()
 
         installer = Installer()
-        if installer.is_update_needed():
-            installer.install_resources()
+        installer.install_resources()
 
 
 

@@ -1,15 +1,14 @@
-# resources/icons/generate_icons.py
 import os
 from PIL import Image
 import subprocess
 import platform
 import logging
+import shutil
 
 from utils.logger import configure_logger
 
 configure_logger()
 logger = logging.getLogger(__name__)
-
 
 class IconGenerator:
     def __init__(self, input_path, output_dir):
@@ -33,13 +32,15 @@ class IconGenerator:
                     logger.info(f"Creating icon: {icon_path}")
                     self.image.resize((size, size)).save(icon_path)
                     logger.info(f"Creating ICNS: {icns_path}")
-                    subprocess.run(['iconutil', '-c', 'icns', iconset_dir, '-o', icns_path], check=True)
-                    subprocess.run(['rm', '-r', iconset_dir])
+                    result = subprocess.run(['iconutil', '-c', 'icns', iconset_dir, '-o', icns_path], capture_output=True, text=True)
+                    if result.returncode != 0:
+                        logger.error(f"iconutil failed: {result.stderr}")
+                        continue
+                    shutil.rmtree(iconset_dir)  # Use shutil.rmtree to remove the iconset directory
                 except subprocess.CalledProcessError as e:
                     logger.error(f"Failed to generate ICNS for size {size}x{size}: {e}")
         else:
-            logger.error(
-                "ICNS conversion only supported on macOS! You can also use a tool like https://iconverticons.com/")
+            logger.error("ICNS conversion only supported on macOS! You can also use a tool like https://iconverticons.com/")
 
     def convert_to_ico(self):
         logger.info("Converting to ICO")
@@ -64,7 +65,6 @@ class IconGenerator:
         self.convert_to_icns()
         self.convert_to_ico()
         self.convert_to_gif()
-
 
 if __name__ == "__main__":
     input_path = 'icon.png'

@@ -45,3 +45,9 @@ class DownloadManager:
             self.logger.info(f"Directory copied to: {dest_dir}")
         except Exception as e:
             self.logger.error(f"Failed to copy directory: {e}")
+
+    def download(self, url, dest_path):
+        response = requests.get(url, stream=True)
+        response.raise_for_status()
+        with open(dest_path, 'wb') as file:
+            shutil.copyfileobj(response.raw, file)

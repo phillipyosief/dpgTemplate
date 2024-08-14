@@ -3,7 +3,6 @@ import logging
 from colorama import Fore, Style, init
 import os
 import datetime
-
 from user_data.directories import DirectoryManager
 
 # Initialize colorama
@@ -22,14 +21,16 @@ def configure_logger():
         def format(self, record):
             module_name = f"{record.name:^35}"  # Centered and fixed width for module name
             timestamp = self.formatTime(record, '%Y-%m-%d %H:%M:%S')
-            log_format = f"{Fore.GREEN}[{module_name}] {Fore.YELLOW}[{timestamp}] {Fore.CYAN}[{record.levelname}]{Style.RESET_ALL} {record.getMessage()}"
+            levelname = f"{record.levelname:^5}"  # Center-aligned and fixed width for log level
+            log_format = f"{Fore.GREEN}[{module_name}] {Fore.YELLOW}[{timestamp}] {Fore.CYAN}[{levelname}]{Style.RESET_ALL} {record.getMessage()}"
             return log_format
 
     class PlainFormatter(logging.Formatter):
         def format(self, record):
             module_name = f"{record.name:^35}"  # Centered and fixed width for module name
             timestamp = self.formatTime(record, '%Y-%m-%d %H:%M:%S')
-            log_format = f"[{module_name}] [{timestamp}] [{record.levelname}] {record.getMessage()}"
+            levelname = f"{record.levelname:^1}"  # Center-aligned and fixed width for log level
+            log_format = f"[{module_name}] [{timestamp}] [{levelname}] {record.getMessage()}"
             return log_format
 
     # Configure logging
