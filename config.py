@@ -13,8 +13,6 @@ APP_CONFIG = {
     'LOCAL-PATH': ''
 }
 
-
-
 WINDOW_CONFIG = {
     'WINDOW_WIDTH': 800,
     'WINDOW_HEIGHT': 600,
