@@ -4,7 +4,7 @@ from appdirs import AppDirs
 
 APP_CONFIG = {
     'APP_NAME': 'dpgTemplate',
-    'APP_VERSION': '0.0.1',
+    'APP_VERSION': '1.0.0',
     'APP_DESCRIPTION': 'dpgTemplate is a simple application that does nothing.',
     'APP_AUTHOR': 'Phillip Jerome Yosief',
     'APP_AUTHOR_EMAIL': '',
