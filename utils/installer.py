@@ -121,7 +121,7 @@ class Installer:
                     self.logger.info(f"Writing latest version {latest_version} to {version_file}")
                     with open(version_file, 'w') as file:
                         file.write(latest_version)
-                    self.logger.info(f"New version {latest_version} installed")
+                    self.logger.info(f"New version {latest_version} installed, old version {get_installed_version()}")
                 else:
                     self.logger.error("Failed to get the latest version")
             else:
