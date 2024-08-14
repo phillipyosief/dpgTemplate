@@ -9,6 +9,7 @@ from utils.logger import configure_logger
 from user_data.directories import DirectoryManager
 from utils.fonts import FontManager
 from utils.icon import Icon
+from utils.installer import Installer
 
 configure_logger()
 
@@ -25,6 +26,12 @@ class App:
 
         directory_manager = DirectoryManager()
         directory_manager.create_app_dirs()
+
+        installer = Installer()
+        if installer.is_update_needed():
+            installer.install_resources()
+
+
 
 if __name__ == '__main__':
     dpg.create_context()

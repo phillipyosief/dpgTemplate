@@ -2,13 +2,19 @@
 from appdirs import AppDirs
 
 APP_CONFIG = {
-    'APP_NAME': 'MyApp',
-    'APP_VERSION': '1.0.0',
-    'APP_DESCRIPTION': 'MyApp is a simple application that does nothing.',
-    'APP_AUTHOR': '',
+    'APP_NAME': 'dpgTemplate',
+    'APP_VERSION': '1.0.1',
+    'APP_DESCRIPTION': 'dpgTemplate is a simple application that does nothing.',
+    'APP_AUTHOR': 'phillipyosief',
     'APP_AUTHOR_EMAIL': '',
-    'APP_PORTABLE': False
+    'APP_PORTABLE': False,
+    'GITHUB_URL': 'phillipyosief/dpgTemplate',
+    'LOCAL-PATH': ''
+
 }
+
+with open('version.txt', 'w') as version_file:
+    version_file.write(APP_CONFIG['APP_VERSION'])
 
 WINDOW_CONFIG = {
     'WINDOW_WIDTH': 800,
@@ -35,6 +41,17 @@ FONT_CONFIG = {
 
 MENUBAR_CONFIG = {
 
+}
+
+UPDATE_CONFIG = {
+    'METHOD': 'GITHUB', # GITHUB or LOCAL-PATH: Just getting the latest release from a network drive
+    'GITHUB': {
+        'REPO': APP_CONFIG['GITHUB_URL']
+    },
+    'LOCAL-PATH': {
+        'PATH': APP_CONFIG['LOCAL-PATH']
+    },
+    'AUTO-UPDATE': True
 }
 
 app_dirs = AppDirs(APP_CONFIG['APP_NAME'], APP_CONFIG['APP_AUTHOR'])

@@ -15,6 +15,9 @@ def configure_logger():
     if not isinstance(log_dir, str):
         raise TypeError(f"Expected log_dir to be a string, but got {type(log_dir).__name__}")
 
+    # Ensure the log directory exists
+    os.makedirs(log_dir, exist_ok=True)
+
     class CustomFormatter(logging.Formatter):
         def format(self, record):
             module_name = f"{record.name:^35}"  # Centered and fixed width for module name
