@@ -33,11 +33,11 @@ class DirectoryManager:
 
         # Create directories if they do not exist
         for directory in directories:
+            logger.debug(f"Checking if directory exists: {directory}")
             if not os.path.exists(directory):
-                os.makedirs(directory)
                 logger.info(f"Created Directory: {directory}")
             else:
-                logger.info(f"Directory already exist: {directory}")
+                logger.info(f"Directory already exists: {directory}")
 
     def delete_app_dirs(self):
         # List of directories to delete
@@ -59,6 +59,10 @@ class DirectoryManager:
                 print(f"Deleted directory: {directory}")
             else:
                 print(f"Directory does not exist: {directory}")
+
+    def is_directory_empty(self, directory):
+        self.validate_directory_path(directory)
+        return len(os.listdir(directory)) == 0
 
 
 # Initialize app_dirs globally

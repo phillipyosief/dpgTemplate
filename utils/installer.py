@@ -1,11 +1,13 @@
 # utils/installer.py
 import os
+import sys
 import logging
 import requests
 import shutil
 from utils.download import DownloadManager
 from config import UPDATE_CONFIG, APP_CONFIG, app_dirs
 from utils.logger import configure_logger
+from user_data.directories import DirectoryManager
 
 configure_logger()
 logger = logging.getLogger(__name__)
@@ -115,7 +117,7 @@ class Installer:
         self.logger.info("Checking if an update is needed")
         self.logger.info(f"Installed version: {get_installed_version()}")
         try:
-            if self.is_update_needed():
+            if self.is_update_needed() or DirectoryManager().is_directory_empty(app_dirs.user_data_dir):
                 method = UPDATE_CONFIG['METHOD']
                 self.logger.info(f"Update method: {method}")
                 if method == 'GITHUB':
@@ -133,6 +135,8 @@ class Installer:
                     self.logger.info(f"New version {latest_version} installed")
                 else:
                     self.logger.error("Failed to get the latest version")
+                # restart the app
+                os.execl(sys.executable, sys.executable, *sys.argv)
             else:
                 self.logger.info("No update needed")
         except Exception as e:
