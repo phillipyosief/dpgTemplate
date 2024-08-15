@@ -5,7 +5,10 @@ import requests
 import shutil
 from utils.download import DownloadManager
 from config import UPDATE_CONFIG, APP_CONFIG, app_dirs
+from utils.logger import configure_logger
 
+configure_logger()
+logger = logging.getLogger(__name__)
 
 def get_latest_version():
     try:
@@ -14,16 +17,17 @@ def get_latest_version():
             url = f"https://raw.githubusercontent.com/{repo}/main/version.txt"
             response = requests.get(url)
             if response.status_code == 200:
+                logging.getLogger(__name__).info(f"Latest version: {response.text.strip()}")
                 return response.text.strip()
         elif UPDATE_CONFIG['METHOD'] == 'LOCAL-PATH':
             version_file = os.path.join(UPDATE_CONFIG['LOCAL-PATH']['PATH'], 'version.txt')
             if os.path.exists(version_file):
                 with open(version_file, 'r') as file:
+                    logging.getLogger(__name__).info(f"Latest version: {file.read().strip()}")
                     return file.read().strip()
     except Exception as e:
         logging.getLogger(__name__).error(f"An error occurred: {e}")
     return None
-
 
 def get_installed_version():
     try:
@@ -36,6 +40,7 @@ def get_installed_version():
     return None
 
 
+
 class Installer:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -45,9 +50,11 @@ class Installer:
         try:
             installed_version = get_installed_version()
             latest_version = get_latest_version()
-            if installed_version and latest_version:
-                return installed_version != latest_version
-            return True
+            # check if installed version is older than the latest version if its same or newer return False
+            if installed_version and latest_version and installed_version < latest_version:
+                return True
+            else:
+                return False
         except Exception as e:
             self.logger.error(f"An error occurred: {e}")
             return False
@@ -105,6 +112,8 @@ class Installer:
             self.logger.error(f"An error occurred: {e}")
 
     def install_resources(self):
+        self.logger.info("Checking if an update is needed")
+        self.logger.info(f"Installed version: {get_installed_version()}")
         try:
             if self.is_update_needed():
                 method = UPDATE_CONFIG['METHOD']
@@ -121,14 +130,13 @@ class Installer:
                     self.logger.info(f"Writing latest version {latest_version} to {version_file}")
                     with open(version_file, 'w') as file:
                         file.write(latest_version)
-                    self.logger.info(f"New version {latest_version} installed, old version {get_installed_version()}")
+                    self.logger.info(f"New version {latest_version} installed")
                 else:
                     self.logger.error("Failed to get the latest version")
             else:
                 self.logger.info("No update needed")
         except Exception as e:
             self.logger.error(f"An error occurred: {e}")
-
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

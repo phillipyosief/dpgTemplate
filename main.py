@@ -1,9 +1,11 @@
 # main.py
 import dearpygui.dearpygui as dpg
+from tkinter import messagebox
 import logging
 
 import config
 
+from view.menubar import MenuBar
 from view.home import Home
 from utils.logger import configure_logger
 from user_data.directories import DirectoryManager
@@ -16,11 +18,12 @@ configure_logger()
 # Create a logger instance
 logger = logging.getLogger(__name__)
 
+
 class App:
     def __init__(self):
         logger.info("Initializing App")
         self.home = Home()
-        # init fonts
+
         font_manager = FontManager()
         font_manager.setup_fonts()
 
@@ -30,7 +33,13 @@ class App:
         installer = Installer()
         installer.install_resources()
 
+        # TODO: Test the MenuBar class
+        self.menubar = MenuBar()
+        self.menu_file = self.menubar.add_menu("File")
+        self.menubar.add_menu_entry(self.menu_file, "New", None)
 
+
+        messagebox.showinfo("dpgTemplate", "Welcome to dpgTemplate!")
 
 if __name__ == '__main__':
     dpg.create_context()

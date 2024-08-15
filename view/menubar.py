@@ -1,20 +1,37 @@
+# view/menubar.py
 import tkinter as tk
 from tkinter import messagebox
 import dearpygui.dearpygui as dpg
 import platform
+import config
+import logging
 
-class MenuManager:
+from utils.logger import configure_logger
+
+configure_logger()
+logger = logging.getLogger(__name__)
+
+class MenuBar:
     def __init__(self):
+        logger.info("Initializing MenuBar")
         self.system = platform.system()
-        if self.system == "Darwin":  # macOS
+
+        if self.system == "Darwin":
             self.window = tk.Tk()
-            self.window.title("Main")
+            self.window.title(config.APP_CONFIG['APP_NAME'])
+            self.window.iconbitmap(config.RESOURCES_CONFIG['ICONS']['MACOS']['128x128'])
             self.menubar = tk.Menu(self.window)
+            self.window.option_add('*tearOff', False)
             self.window.config(menu=self.menubar)
+            self.window.withdraw()  # hide the main window
+
         else:
             self.window = None
             dpg.create_context()
             self.menubar = dpg.add_menu_bar()
+
+    def run_tkinter(self):
+        self.window.mainloop()
 
     def add_menu(self, label):
         if self.system == "Darwin":
@@ -30,42 +47,54 @@ class MenuManager:
         else:
             dpg.add_menu_item(label=label, callback=command, parent=menu)
 
-    def show(self):
+    def add_cascade(self, menu, label):
         if self.system == "Darwin":
-            self.window.mainloop()
+            cascade = tk.Menu(menu, tearoff=0)
+            menu.add_cascade(label=label, menu=cascade)
+            return cascade
         else:
-            dpg.create_viewport(title='Custom Title', width=800, height=600)
-            dpg.setup_dearpygui()
-            dpg.show_viewport()
-            dpg.start_dearpygui()
-            dpg.destroy_context()
+            return dpg.add_menu(label=label, parent=menu)
 
-def do_about_dialog():
-    if menu_manager.system == "Darwin":
-        tk_version = menu_manager.window.tk.call('info', 'patchlevel')
-        messagebox.showinfo(message=app_name + "\nThe answer to all your problems.\n\nTK version: " + tk_version)
-    else:
-        print("About dialog")
+    def add_submenu(self, menu, label):
+        if self.system == "Darwin":
+            submenu = tk.Menu(menu, tearoff=0)
+            menu.add_cascade(label=label, menu=submenu)
+            return submenu
+        else:
+            return dpg.add_menu(label=label, parent=menu)
 
-def do_preferences():
-    if menu_manager.system == "Darwin":
-        messagebox.showinfo(message="Preferences window")
-    else:
-        print("Preferences window")
+    def hide_menu_entry(self, menu, label):
+        if self.system == "Darwin":
+            for index in range(menu.index(tk.END) + 1):
+                if menu.entrycget(index, "label") == label:
+                    menu.entryconfig(index, state=tk.DISABLED)
+                    break
+        else:
+            dpg.hide_item(menu)
 
-def do_button():
-    print("You pushed my button")
+    def show_menu_entry(self, menu, label):
+        if self.system == "Darwin":
+            for index in range(menu.index(tk.END) + 1):
+                if menu.entrycget(index, "label") == label:
+                    menu.entryconfig(index, state=tk.NORMAL)
+                    break
+        else:
+            dpg.show_item(menu)
 
-if __name__ == "__main__":
-    app_name = "Chocolate Rain"
-    menu_manager = MenuManager()
+    def change_menu_entry_callback(self, menu, label, new_command):
+        if self.system == "Darwin":
+            for index in range(menu.index(tk.END) + 1):
+                if menu.entrycget(index, "label") == label:
+                    menu.entryconfig(index, command=new_command)
+                    break
+        else:
+            dpg.set_item_callback(menu, new_command)
 
-    app_menu = menu_manager.add_menu('Apple')
-    menu_manager.add_menu_entry(app_menu, 'About ' + app_name, do_about_dialog)
-    menu_manager.add_menu_entry(app_menu, 'Preferences...', do_preferences)
-
-    if menu_manager.system != "Darwin":
-        with dpg.window(label="Main Window"):
-            dpg.add_button(label="Push", callback=do_button)
-
-    menu_manager.show()
+    def change_menu_entry_label(self, menu, old_label, new_label):
+        if self.system == "Darwin":
+            for index in range(menu.index(tk.END) + 1):
+                if menu.entrycget(index, "label") == old_label:
+                    menu.entryconfig(index, label=new_label)
+                    break
+        else:
+            dpg.set_item_label(menu, new_label)
