@@ -1,22 +1,28 @@
-# main.py
-import dearpygui.dearpygui as dpg
-from tkinter import messagebox
 import logging
+import platform
+import dearpygui.dearpygui as dpg
 
 import config
-
-from view.menubar import MenuBar
-from view.home import Home
-from utils.logger import configure_logger
 from user_data.directories import DirectoryManager
 from utils.fonts import FontManager
 from utils.icon import Icon
 from utils.installer import Installer
+from utils.logger import configure_logger
+from view.home import Home
+from utils.image import ImageHandler
 
 configure_logger()
 
 # Create a logger instance
 logger = logging.getLogger(__name__)
+
+# check if macOS
+if platform.system() == "Darwin" and config.MENUBAR_CONFIG['NATIVE_MACOS_MENUBAR'] == True:
+    logger.info("Using macOS native menubar")
+    from view.menubar.macos import MenuBar
+else:
+    logger.info("Using default menubar")
+    from view.menubar.default import MenuBar
 
 
 class App:
@@ -33,15 +39,13 @@ class App:
         installer = Installer()
         installer.install_resources()
 
-        # TODO: Test the MenuBar class
-        self.menubar = MenuBar()
-        self.menu_file = self.menubar.add_menu("File")
-        self.menubar.add_menu_entry(self.menu_file, "New", None)
+        image_handler = ImageHandler()
+        image_handler.load_all_images()
 
 
-        messagebox.showinfo("dpgTemplate", "Welcome to dpgTemplate!")
 
-if __name__ == '__main__':
+
+def run_dearpygui():
     dpg.create_context()
     dpg.create_viewport(
         title=config.WINDOW_CONFIG['WINDOW_TITLE'],
@@ -62,6 +66,7 @@ if __name__ == '__main__':
     )
 
     app = App()
+
     icon_manager = Icon()
     icon_manager.set_all_icons()
 
@@ -71,3 +76,7 @@ if __name__ == '__main__':
     dpg.set_primary_window(app.home.window, True)
     dpg.start_dearpygui()
     dpg.destroy_context()
+
+
+if __name__ == '__main__':
+    run_dearpygui()

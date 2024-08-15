@@ -36,7 +36,9 @@ FONT_CONFIG = {
     'FONT_SCALE': None,
 }
 
-MENUBAR_CONFIG = {}
+MENUBAR_CONFIG = {
+    'NATIVE_MACOS_MENUBAR': True
+}
 
 UPDATE_CONFIG = {
     'METHOD': 'GITHUB',  # GITHUB or LOCAL-PATH: Just getting the latest release from a network drive
@@ -73,5 +75,9 @@ RESOURCES_CONFIG = {
             '128x128': app_dirs.user_data_dir + '/resources/icons/generated/icns/icon_128x128.icns',
             '256x256': app_dirs.user_data_dir + '/resources/icons/generated/icns/icon_256x256.icns',
         }
-    }
+    },
+    'IMAGES': {
+        'LOGO': app_dirs.user_data_dir + '/resources/images/logo.png'
+    },
 }
+
